@@ -1,8 +1,0 @@
-default:
-  tags:
-    - common
-
-include:
-  - project: verif/ci
-    ref: master
-    file: run-mik32.yml
