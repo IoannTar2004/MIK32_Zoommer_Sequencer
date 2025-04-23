@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "string.h": "c",
+        "mik32_hal_i2c.h": "c",
+        "mik32_hal_pcc.h": "c",
+        "mik32_hal_irq.h": "c",
+        "mik32_hal_usart.h": "c"
+    }
+}
