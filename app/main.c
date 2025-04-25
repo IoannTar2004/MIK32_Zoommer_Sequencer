@@ -1,14 +1,12 @@
 #include "mik32_hal_usart.h"
-#include "mik32_hal_i2c.h"
-#include "mik32_hal_irq.h"
-#include "mik32_hal_dma.h"
 #include "mik32_hal_spi.h"
 #include "xprintf.h"
 
 #include "utils/pins.h"
 #include "utils/delays.h"
+#include "libs/IRreciever.h"
 
-#define IR_PIN_NUM (10)
+#define IR_PIN 2
 
 static void SystemClock_Config();
 static void USART_Init();
@@ -25,10 +23,13 @@ int main() {
   SPI_Init();
 
   // GPIO_0->DIRECTION_IN |= 1 << 10;
-  pin_mode(2, __INPUT);
+  ir_set_pin(2);
+  uint32_t a;
   while (1) {
-    xprintf("%d\r\n", digital_read(2));
-    delay(1000);
+    if (ir_decode(&a)) {
+      xprintf("%x\r\n", a);
+      a = 0;
+    }
   }
   
 }

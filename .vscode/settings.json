@@ -12,6 +12,7 @@
         "stddef.h": "c",
         "mik32_hal_gpio.h": "c",
         "pins.h": "c",
-        "mik32_hal_dma.h": "c"
+        "mik32_hal_dma.h": "c",
+        "delays.h": "c"
     }
 }

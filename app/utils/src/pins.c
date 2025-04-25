@@ -53,7 +53,8 @@ void digital_write(uint8_t pin_num, uint8_t level) {
     pin.gpio->OUTPUT &= ~pin.pin_num;
 }
 
+__attribute__((section(".ram_text")))
 uint32_t digital_read() {
     // pins pin = gpio_array[pin_num];
-    return (GPIO_0->STATE & (1 << 10));
+    return (GPIO_0->STATE & (1 << 10)) > 0;
 }
