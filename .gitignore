@@ -1,3 +1,4 @@
 build
 .gitlab-ci.yml
 set_git_configs.sh
+usbipd.txt
