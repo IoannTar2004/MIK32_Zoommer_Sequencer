@@ -19,7 +19,8 @@
 #define __LOW GPIO_PIN_LOW					/**< Псевдоним @ref GPIO_PIN_LOW. Низкий выходной уровень GPIO. */
 #define __HIGH GPIO_PIN_HIGH				/**< Псевдоним @ref GPIO_PIN_HIGH. Высокий выходной уровень GPIO. */
 #define __INPUT HAL_GPIO_MODE_GPIO_INPUT	/**< Псевдоним @ref HAL_GPIO_MODE_GPIO_INPUT. Режим вывода - GPIO. Вход. */
-#define __OUTPUT HAL_GPIO_MODE_GPIO_OUTPUT	/**< Псевдоним @ref HAL_GPIO_MODE_GPIO_OUTPUT. Режим вывода - GPIO. Выход. */				
+#define __OUTPUT HAL_GPIO_MODE_GPIO_OUTPUT	/**< Псевдоним @ref HAL_GPIO_MODE_GPIO_OUTPUT. Режим вывода - GPIO. Выход. */	
+#define __SERIAL HAL_GPIO_MODE_SERIAL	
 #define __PULL_NONE HAL_GPIO_PULL_NONE		/**< Псевдоним @ref HAL_GPIO_PULL_NONE. Подтяжка не подключаются. */			
 #define __PULL_UP HAL_GPIO_PULL_UP			/**< Псевдоним @ref HAL_GPIO_PULL_UP. Подтяжка к питанию. */		
 #define __PULL_DOWN HAL_GPIO_PULL_DOWN		/**< Псевдоним @ref HAL_GPIO_PULL_DOWN. Подтяжка к земле. */			

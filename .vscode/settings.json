@@ -1,4 +1,6 @@
 {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
     "files.associations": {
         "string.h": "c",
         "mik32_hal_i2c.h": "c",
@@ -7,6 +9,9 @@
         "mik32_hal_usart.h": "c",
         "scr1_timer.h": "c",
         "mik32_hal_spi.h": "c",
-        "stddef.h": "c"
+        "stddef.h": "c",
+        "mik32_hal_gpio.h": "c",
+        "pins.h": "c",
+        "mik32_hal_dma.h": "c"
     }
 }

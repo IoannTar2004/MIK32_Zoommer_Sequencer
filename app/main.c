@@ -3,7 +3,10 @@
 #include "mik32_hal_irq.h"
 #include "mik32_hal_dma.h"
 #include "mik32_hal_spi.h"
-#include "scr1_timer.h"
+#include "xprintf.h"
+
+#include "utils/pins.h"
+#include "utils/delays.h"
 
 #define IR_PIN_NUM (10)
 
@@ -15,25 +18,17 @@ static void SPI_Init();
 USART_HandleTypeDef husart0;
 SPI_HandleTypeDef spi;
 
-#define SCR1_TIMER_GET_TIME()                                                  \
-   (((uint64_t)(SCR1_TIMER->MTIMEH) << 32) | (SCR1_TIMER->MTIME))
-
-#define SYSTEM_FREQ_HZ 32000000UL
-
-__attribute__((section(".ram_text"))) 
-void delay(uint32_t ms) {
-    uint64_t end_mtimer = SCR1_TIMER_GET_TIME() + ms * (SYSTEM_FREQ_HZ / 1000);
-    while (SCR1_TIMER_GET_TIME() < end_mtimer);
-}
-
-
 int main() {
   SystemClock_Config();
   GPIO_Init();
   USART_Init();
   SPI_Init();
 
-  while (1){
+  // GPIO_0->DIRECTION_IN |= 1 << 10;
+  pin_mode(2, __INPUT);
+  while (1) {
+    xprintf("%d\r\n", digital_read(2));
+    delay(1000);
   }
   
 }

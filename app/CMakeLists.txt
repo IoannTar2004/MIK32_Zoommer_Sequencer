@@ -1,10 +1,12 @@
 # Setting up app build
 set(APP_NAME ${CMAKE_PROJECT_NAME})
 
-add_executable(${APP_NAME}
-    startup.c
-    main.c
+file(GLOB_RECURSE SOURCES
+    utils/src/*.c
+    libs/src/*.c
+    *.c
 )
+add_executable(${APP_NAME} ${SOURCES})
 
 target_include_directories(${APP_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
