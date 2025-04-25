@@ -4,6 +4,9 @@
         "mik32_hal_i2c.h": "c",
         "mik32_hal_pcc.h": "c",
         "mik32_hal_irq.h": "c",
-        "mik32_hal_usart.h": "c"
+        "mik32_hal_usart.h": "c",
+        "scr1_timer.h": "c",
+        "mik32_hal_spi.h": "c",
+        "stddef.h": "c"
     }
 }
