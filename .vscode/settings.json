@@ -19,6 +19,10 @@
         "riscv-irq.h": "c",
         "csr.h": "c",
         "scr1_csr_encoding.h": "c",
-        "riscv_irq.h": "c"
+        "riscv_irq.h": "c",
+        "ssd1306.h": "c",
+        "ssd.h": "c",
+        "tone.h": "c",
+        "irreciever.h": "c"
     }
 }

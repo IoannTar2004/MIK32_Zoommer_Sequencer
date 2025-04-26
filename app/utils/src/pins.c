@@ -62,7 +62,7 @@ void digital_write(uint8_t pin_num, uint8_t level) {
     if (level)
         pin.gpio->OUTPUT |= pin.pin_num;
     else
-    pin.gpio->OUTPUT &= ~pin.pin_num;
+        pin.gpio->OUTPUT &= ~pin.pin_num;
 }
 
 __attribute__((section(".ram_text")))

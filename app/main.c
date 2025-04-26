@@ -5,9 +5,9 @@
 
 #include "utils/pins.h"
 #include "utils/delays.h"
-#include "libs/IRreciever.h"
-#include "libs/tone.h"
-
+// #include "libs/IRreciever.h"
+// #include "libs/tone.h"
+#include "libs/ssd1306.h"
 
 #define SYSTEM_FREQ_HZ 32000000UL
 #define PWM_FREQ_HZ (100)
@@ -16,24 +16,18 @@
 #define PWM_DUTY_CYCLE_PERCENT (50)
 #define PWM_DUTY_CYCLE_TICKS ((PWM_PERIOD_TICKS / 100) * PWM_DUTY_CYCLE_PERCENT)
 
-
 static void SystemClock_Config();
 static void USART_Init();
 static void GPIO_Init();
 static void SPI_Init();
 static void TMR_PWM_Init();
 static void TMR_Init();
+static void oled_temp();
 
-USART_HandleTypeDef husart0;
-SPI_HandleTypeDef spi;
-
-typedef struct a {
-  float freq;
-  float dur;
-} note;
+static USART_HandleTypeDef husart0;
+static SPI_HandleTypeDef spi;
 
 uint8_t i = 0;
-
 
 int main() {
   SystemClock_Config();
@@ -45,32 +39,23 @@ int main() {
 
   // ir_set_pin(2);
 
-  note notes[] = {
-    {.freq = 466.16, .dur = 1000},
-    {.freq = 100, .dur = 1000}
-  };
-
-  tone_init(3, TIMER32_1, TIMER32_0);
-  set_position_change(&i);
+  // tone_init(3, TIMER32_1, TIMER32_0);
+  // set_position_change(&i);
+  
+  oled_init(spi, 18, 19);
+  oled_draw_rectangle(64, 32, 30, 67);
+  volatile int i = 0;
   while (1) {
-    tone(notes[i].freq, notes[i].dur);
-    if (i >= 2) {
-      i = 0;
-    }
-    char x = i + '0';
-    HAL_USART_Print(&husart0, &x, USART_TIMEOUT_DEFAULT);
-    delay(1000);
+    // i++;
   }
   
 }
 
 void TMR_PWM_Init() {
-  // PAD_CONFIG->PORT_0_CFG |= 0b10;
-  // Включение тактирования TIMER32_1
   PM->CLK_APB_P_SET = PM_CLOCK_APB_P_TIMER32_1_M;
   TIMER32_1->ENABLE = 0;
   TIMER32_1->CONTROL =
-      TIMER32_CONTROL_MODE_UP_M | TIMER32_CONTROL_CLOCK_PRESCALER_M;
+  TIMER32_CONTROL_MODE_UP_M | TIMER32_CONTROL_CLOCK_PRESCALER_M;
   TIMER32_1->INT_CLEAR = 0xFFFFFFFF;
 
   TIMER32_1->CHANNELS[0].CNTRL =
@@ -89,9 +74,6 @@ void TMR_Init() {
       TIMER32_CONTROL_MODE_UP_M | TIMER32_CONTROL_CLOCK_PRESCALER_M;
   TIMER32_0->INT_MASK = 0;
   TIMER32_0->INT_CLEAR = 0xFFFFFFFF;
-  // TIMER32_0->ENABLE = 1;
-  // Включение прерывания по переполнению
-  // TIMER32_0->INT_MASK = TIMER32_INT_OVERFLOW_M;
 }
 
 
@@ -169,18 +151,6 @@ void GPIO_Init() {
     };
 
     HAL_GPIO_Init(GPIO_1, &gpio_cs);
-
-  // первая функция (порт общего назначения);
-//   PAD_CONFIG->PORT_0_CFG |= 0 << (LED_PIN_NUM * 2);
-
-  // нагрузочная способность 2 мА;
-//   PAD_CONFIG->PORT_0_DS |= 0 << (LED_PIN_NUM * 2);
-
-  // резисторы подтяжки отключены
-//   PAD_CONFIG->PORT_0_PUPD |= 0 << (LED_PIN_NUM * 2);
-
-  // Установка направления выводов как выход.
-//   GPIO_2->DIRECTION_OUT = 1 << LED_PIN_NUM;
 
 }
 
@@ -264,7 +234,7 @@ void oled_temp() {
     0xAF          // Display ON
   };
 
-  uint8_t rx[1];
+  uint8_t rx[128];
   HAL_SPI_Exchange(&spi, init, rx, sizeof(init), 3000);
 
   uint8_t white[128] = { [0 ... 127] = 0x0 }; // строка из нулей (все пиксели включены)
@@ -283,5 +253,6 @@ void oled_temp() {
   uint8_t white2[128] = { [0 ... 127] = 0xFF };
 
   GPIO_1->OUTPUT |= (1 << 13); // данные
-    HAL_SPI_Exchange(&spi, white2, rx, sizeof(white), -1);
+
+  HAL_SPI_Exchange(&spi, white2, rx, sizeof(white2), -1);
 }
