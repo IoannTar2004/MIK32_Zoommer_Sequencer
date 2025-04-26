@@ -13,6 +13,12 @@
         "mik32_hal_gpio.h": "c",
         "pins.h": "c",
         "mik32_hal_dma.h": "c",
-        "delays.h": "c"
+        "delays.h": "c",
+        "timer32.h": "c",
+        "epic.h": "c",
+        "riscv-irq.h": "c",
+        "csr.h": "c",
+        "scr1_csr_encoding.h": "c",
+        "riscv_irq.h": "c"
     }
 }
