@@ -8,6 +8,7 @@
 // #include "libs/IRreciever.h"
 // #include "libs/tone.h"
 #include "libs/ssd1306.h"
+#include "project/display.h"
 
 #define SYSTEM_FREQ_HZ 32000000UL
 #define PWM_FREQ_HZ (100)
@@ -43,7 +44,7 @@ int main() {
   // set_position_change(&i);
   
   oled_init(spi, 18, 19);
-  oled_draw_rectangle(64, 32, 30, 67);
+  print_note(2, 2, "G#5");
   volatile int i = 0;
   while (1) {
     // i++;
@@ -215,44 +216,4 @@ void SPI_Init() {
   if (HAL_SPI_Init(&spi) == HAL_OK)
       HAL_USART_Print(&husart0, "SPI0 init OK\r\n", USART_TIMEOUT_DEFAULT);
   HAL_SPI_Enable(&spi);
-}
-
-// временная функция
-void oled_temp() {
-  GPIO_1->DIRECTION_OUT |= (1 << 12) | (1 << 13); // RST и D/C#
-  GPIO_1->CLEAR |= (1 << 12) | (1 << 13);         // сброс
-  delay(10);
-  GPIO_1->OUTPUT |= (1 << 12);                    // RST = 1 (отпустить сброс)
-  delay(10);
-
-  // Передача команд
-  GPIO_1->CLEAR |= (1 << 13); // D/C# = 0
-
-  uint8_t init[] = {
-    0xC8,         // COM Output Scan Direction: remapped mode
-    0x8D, 0x14,   // Enable charge pump
-    0xAF          // Display ON
-  };
-
-  uint8_t rx[128];
-  HAL_SPI_Exchange(&spi, init, rx, sizeof(init), 3000);
-
-  uint8_t white[128] = { [0 ... 127] = 0x0 }; // строка из нулей (все пиксели включены)
-  for (int page = 0; page < 8; page++) {
-      uint8_t set_page[] = {0xB0 + page, 0x00, 0x10};
-      GPIO_1->CLEAR |= (1 << 13); // команда
-      HAL_SPI_Exchange(&spi, set_page, rx, 3, -1);
-
-      GPIO_1->OUTPUT |= (1 << 13); // данные
-      HAL_SPI_Exchange(&spi, white, rx, sizeof(white), -1);
-  }
-
-  uint8_t set_page[] = {0xB0 + 5, 0x00, 0x10};
-  GPIO_1->CLEAR |= (1 << 13); // команда
-  HAL_SPI_Exchange(&spi, set_page, rx, 3, -1);
-  uint8_t white2[128] = { [0 ... 127] = 0xFF };
-
-  GPIO_1->OUTPUT |= (1 << 13); // данные
-
-  HAL_SPI_Exchange(&spi, white2, rx, sizeof(white2), -1);
 }
