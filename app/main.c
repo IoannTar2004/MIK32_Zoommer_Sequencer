@@ -1,14 +1,16 @@
 #include "mik32_hal_usart.h"
 #include "mik32_hal_spi.h"
 #include "timer32.h"
+#include "xprintf.h"
 
 #include "utils/pins.h"
 #include "utils/delays.h"
-// #include "libs/IRreciever.h"
-// #include "libs/tone.h"
+#include "libs/IRreciever.h"
+#include "libs/tone.h"
 #include "libs/ssd1306.h"
 #include "project/display.h"
 #include "project/sequencer_logic.h"
+#include "project/IRcontroller.h"
 
 #define SYSTEM_FREQ_HZ 32000000UL
 #define PWM_FREQ_HZ (100)
@@ -35,15 +37,17 @@ int main() {
   TMR_PWM_Init();
   TMR_Init();
 
-  // ir_set_pin(2);
+  ir_set_pin(2);
 
   // tone_init(3, TIMER32_1, TIMER32_0);
   // set_position_change(&i);
   
   oled_init(spi, 18, 19);
   sequencer_init();
+  contoller_init(2);
+  uint32_t i = 0;
   while (1) {
-    
+    controller_decode();
   }
   
 }

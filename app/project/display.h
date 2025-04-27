@@ -1,6 +1,8 @@
 #ifndef DISPLAY
 #define DISPLAY
 
+typedef void (*PrintFunc)(uint8_t, uint8_t);
+
 void print_note(uint8_t x, uint8_t y, char* note);
 
 void print_big_0(uint8_t x, uint8_t y);
@@ -15,5 +17,7 @@ void print_big_8(uint8_t x, uint8_t y);
 void print_big_9(uint8_t x, uint8_t y);
 
 void print_bpm(uint8_t bmp);
+
+PrintFunc* get_big_numbers_array();
 
 #endif

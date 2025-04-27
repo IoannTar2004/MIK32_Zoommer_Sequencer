@@ -2,7 +2,7 @@
 set(APP_NAME ${CMAKE_PROJECT_NAME})
 
 file(GLOB_RECURSE SOURCES
-    project/src/*.c
+    # project/src/*.c
     utils/src/*.c
     libs/src/*.c
     *.c

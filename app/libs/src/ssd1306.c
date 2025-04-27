@@ -1,6 +1,7 @@
 #include "mik32_hal_spi.h"
 #include "utils/pins.h"
 #include "utils/delays.h"
+#include "libs/ssd1306.h"
 
 static SPI_HandleTypeDef spi;
 static uint8_t dc;
@@ -70,6 +71,12 @@ void oled_draw_rectangle(uint8_t x, uint8_t y, uint8_t length, int8_t width) {
         h_nibble = ~(-1 << (width + y % 8));
         add_to_display_buffer(page, x, length, (uint8_t)(-1 << y % 8) & h_nibble);
     }
+}
+
+void oled_clear_screen() {
+    oled_set_print_mode(CLEAR);
+    oled_draw_rectangle(0, 0, 128, 64);
+    oled_set_print_mode(PRINT);
 }
 
 void oled_set_print_mode(uint8_t _mode) {

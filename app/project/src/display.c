@@ -1,5 +1,6 @@
-#include "libs/ssd1306.h"
 #include <string.h>
+#include "libs/ssd1306.h"
+#include "project/display.h"
 
 static void print_A(uint8_t x, uint8_t y);
 static void print_B(uint8_t x, uint8_t y);
@@ -17,11 +18,11 @@ static void print_6(uint8_t x, uint8_t y);
 
 static void print_sharp(uint8_t x, uint8_t y);
 
-static void (*print_letters[])(uint8_t, uint8_t) = {
+static PrintFunc print_letters[] = {
     print_A, print_B, print_C, print_D, print_E, print_F, print_G
 };
 
-static void (*print_numbers[])(uint8_t, uint8_t) = {
+static PrintFunc print_numbers[] = {
     print_2, print_3, print_4, print_5, print_6
 };
 
@@ -209,19 +210,20 @@ void print_big_9(uint8_t x, uint8_t y) {
     oled_draw_rectangle(x, y + HEIGHT - THICKNESS, LENGTH, THICKNESS);
 }
 
-// #pragma GCC push_options
-// #pragma GCC optimize ("O0")
-
 static void (*print_big_numbers[])(uint8_t, uint8_t) = {
     print_big_0, print_big_1, print_big_2, print_big_3, print_big_4,
     print_big_5, print_big_6, print_big_7, print_big_8, print_big_9
 };
     
 void print_bpm(uint8_t bpm) {
-    uint8_t start = 0, step = 41;
-    print_big_numbers[bpm / 100](start, 5);
+    uint8_t start = bpm < 100 ? -10 : 10;
+    uint8_t step = 41;
+    if (bpm >= 100)
+        print_big_numbers[bpm / 100](start, 5);
     print_big_numbers[(bpm / 10) % 10](start + step, 5);
     print_big_numbers[bpm % 10](start + 2 * step, 5);
 }
 
-// #pragma GCC pop_options
+PrintFunc* get_big_numbers_array() {
+    return print_big_numbers;
+}

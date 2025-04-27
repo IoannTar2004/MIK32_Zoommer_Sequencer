@@ -6,6 +6,7 @@ ENTRY(_enter)
 
 MEMORY
 {
+    spifi (RX) : ORIGIN = 0x80000000, LENGTH = 2*1024M
     ram (RWX) : ORIGIN = 0x02000000, LENGTH = 16K /* Internal 16 Kb SRAM*/
     rom (RX) :ORIGIN = 0x01000000, LENGTH = 8K /* Internal eeprom 8 Kb */
 }
@@ -30,37 +31,37 @@ SECTIONS
         *(.text.*)
         *(.gnu.linkonce.t.*)
         PROVIDE(__TEXT_END__ = .);
-    } >rom
+    }>spifi
 
     .fini (READONLY): {
         KEEP (*(SORT_NONE(.fini)))
-    } >rom
+    }>spifi
 
     .preinit_array (READONLY): ALIGN(4) {
         PROVIDE_HIDDEN (__preinit_array_start = .);
         KEEP (*(.preinit_array))
         PROVIDE_HIDDEN (__preinit_array_end = .);
-    } >rom
+    }>spifi
 
     .init_array (READONLY): ALIGN(4) {
         PROVIDE_HIDDEN (__init_array_start = .);
         KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
         KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
         PROVIDE_HIDDEN (__init_array_end = .);
-    } >rom
+    }>spifi
 
     .fini_array (READONLY): ALIGN(4) {
         PROVIDE_HIDDEN (__fini_array_start = .);
         KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
         KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
         PROVIDE_HIDDEN (__fini_array_end = .);
-    } >rom
+    }>spifi
 
     .rodata (READONLY) : {
         *(.rdata)
         *(.rodata .rodata.*)
         *(.gnu.linkonce.r.*)
-    } >rom
+    }>spifi
 
     /* TEXT SECTION
      *
@@ -94,7 +95,7 @@ SECTIONS
         *(.sdata .sdata.* .sdata2.*)
         *(.gnu.linkonce.s.*)
         PROVIDE(__data_end = .);
-    } >ram AT>rom 
+    } >ram AT>spifi 
 
     PROVIDE( __data_source_start = LOADADDR(.data) );
     PROVIDE( __data_target_start = ADDR(.data) );

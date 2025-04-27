@@ -67,6 +67,5 @@ void digital_write(uint8_t pin_num, uint8_t level) {
 
 __attribute__((section(".ram_text")))
 uint32_t digital_read(uint8_t pin_num) {
-    pins pin = gpio_array[pin_num];
     return (GPIO_0->STATE & (1 << 10)) > 0;
 }
