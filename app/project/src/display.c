@@ -31,13 +31,16 @@ static PrintFunc print_big_numbers[] = {
     print_big_5, print_big_6, print_big_7, print_big_8, print_big_9
 };
 
-void print_note(uint8_t x, uint8_t y, char note) {    
-    if (note >= 'A' && note <= 'G')
-        print_letters[note - 'A'](x, y);
-    else if (note >= '2' && note <= '6')
-        print_numbers[note - '2'](x, y);
-    else
-        print_sharp(x, y);
+void print_note(uint8_t x, uint8_t y, char* note) {    
+    for (int i = 0; note[i] != '\0'; i++) {
+        if (note[i] >= 'A' && note[i] <= 'G')
+            print_letters[note[i] - 'A'](x + i * 11, y);
+        else if (note[i] >= '2' && note[i] <= '6')
+            print_numbers[note[i] - '2'](x + i * 10, y);
+        else
+            print_sharp(x + i * 11, y);
+    }
+    
 }
 
 void print_A(uint8_t x, uint8_t y) {
@@ -65,7 +68,7 @@ void print_D(uint8_t x, uint8_t y) {
     oled_draw_rectangle(x, y, 7, 2);
     oled_draw_rectangle(x, y + 2, 2, 8);
     oled_draw_rectangle(x, y + 10, 7, 2);
-    oled_draw_rectangle(x + 8, y + 2, 2, 8);
+    oled_draw_rectangle(x + 7, y + 2, 2, 8);
 }
 
 void print_E(uint8_t x, uint8_t y) {

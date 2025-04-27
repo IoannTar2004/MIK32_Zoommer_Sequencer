@@ -2,10 +2,8 @@
 #include "mik32_hal_spi.h"
 #include "timer32.h"
 
-#include "utils/pins.h"
-#include "utils/delays.h"
 #include "libs/IRreciever.h"
-#include "libs/tone.h"
+// #include "libs/tone.h"
 #include "libs/ssd1306.h"
 #include "project/display.h"
 #include "project/sequencer_logic.h"
@@ -46,12 +44,6 @@ int main() {
   open_sequencer_page();
   contoller_init(2);
   // uint32_t i = 0;
-  print_note(2, 2, 'A');
-  print_note(12, 2, '#');
-  print_note(22, 2, '5');
-  oled_set_print_mode(CLEAR);
-  oled_draw_rectangle(2, 2, 28, 13);
-  oled_set_print_mode(PRINT);
   while (1) {
     controller_decode();
   }
