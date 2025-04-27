@@ -26,19 +26,18 @@ static PrintFunc print_numbers[] = {
     print_2, print_3, print_4, print_5, print_6
 };
 
-void print_note(uint8_t x, uint8_t y, char* note) {    
-    int size = strlen(note);
-    if (size > 3) return;
+static PrintFunc print_big_numbers[] = {
+    print_big_0, print_big_1, print_big_2, print_big_3, print_big_4,
+    print_big_5, print_big_6, print_big_7, print_big_8, print_big_9
+};
 
-    for (int i = 0; i < size; i++) {
-        if (note[i] >= 'A' && note[i] <= 'G')
-            print_letters[note[i] - 'A'](x + i * 11, y);
-        else if (note[i] >= '2' && note[i] <= '6')
-            print_numbers[note[i] - '2'](x + i * 11, y);
-        else
-            print_sharp(x + i * 11, y);
-    }
-    
+void print_note(uint8_t x, uint8_t y, char note) {    
+    if (note >= 'A' && note <= 'G')
+        print_letters[note - 'A'](x, y);
+    else if (note >= '2' && note <= '6')
+        print_numbers[note - '2'](x, y);
+    else
+        print_sharp(x, y);
 }
 
 void print_A(uint8_t x, uint8_t y) {
@@ -209,11 +208,6 @@ void print_big_9(uint8_t x, uint8_t y) {
     oled_draw_rectangle(x, y + RIGHT, LENGTH, THICKNESS);
     oled_draw_rectangle(x, y + HEIGHT - THICKNESS, LENGTH, THICKNESS);
 }
-
-static void (*print_big_numbers[])(uint8_t, uint8_t) = {
-    print_big_0, print_big_1, print_big_2, print_big_3, print_big_4,
-    print_big_5, print_big_6, print_big_7, print_big_8, print_big_9
-};
     
 void print_bpm(uint8_t bpm) {
     uint8_t start = bpm < 100 ? -10 : 10;
@@ -226,4 +220,12 @@ void print_bpm(uint8_t bpm) {
 
 PrintFunc* get_big_numbers_array() {
     return print_big_numbers;
+}
+
+PrintFunc* get_letters_array() {
+    return print_letters;
+}
+
+PrintFunc* get_numbers_array() {
+    return print_numbers;
 }

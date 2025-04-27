@@ -2,6 +2,7 @@
 #include "libs/IRreciever.h"
 #include "project/sequencer_logic.h"
 #include "project/IRcontroller.h"
+#include "xprintf.h"
 
 void contoller_init(uint8_t pin) {
     ir_set_pin(pin);
@@ -24,15 +25,30 @@ void controller_decode() {
     if (!ir_decode(&code))
         return;
 
+    // xprintf("0x%x\r\n", code);
+
     check_if_number_press(code);
     switch (code) {
         case BUTTON_PLUS:
-            ir_press_inc_dec(1);
+            ir_press_plus_minus(1);
             break;
         case BUTTON_MINUS:
-            ir_press_inc_dec(0);
+            ir_press_plus_minus(0);
             break;
-        default:
+        case BUTTON_EQ:
+            ir_change_page();
+            break;
+        case BUTTON_CH:
+            ir_press_up_down(1);
+            break;
+        case BUTTON_CH_MINUS:
+            ir_press_up_down(0);
+            break;
+        case BUTTON_NEXT:
+            ir_press_next_prev(1);
+            break;
+        case BUTTON_PREV:
+            ir_press_next_prev(0);
             break;
     }
     code = 0;

@@ -52,9 +52,9 @@ void tone_init(uint8_t pin_num, TIMER32_TypeDef* _pwm_timer, TIMER32_TypeDef* _d
     riscv_irq_global_enable();
 }
 
-void tone(float freq, float ms) {
+void tone(uint32_t freq, float ms) {
     if (pwm_timer->CHANNELS[channel].OCR == 0) {
-        int period_ticks = OSC_SYSTEM_VALUE / freq;
+        uint32_t period_ticks = (uint32_t) (OSC_SYSTEM_VALUE / freq);
         pwm_timer->TOP = period_ticks;
         pwm_timer->CHANNELS[channel].OCR = period_ticks / 2;
 

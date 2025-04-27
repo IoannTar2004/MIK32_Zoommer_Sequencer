@@ -37,7 +37,7 @@ void oled_init(SPI_HandleTypeDef _spi, uint8_t rst_pin, uint8_t dc_pin) {
 
 static void add_to_display_buffer(uint8_t page, uint8_t x, uint8_t length, uint8_t pixel) {
     for (int i = x; i < x + length; i++) {
-        if (!mode)
+        if (mode == PRINT)
             display_buffer[page][i] |= pixel;
         else
             display_buffer[page][i] &= ~pixel;

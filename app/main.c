@@ -1,7 +1,6 @@
 #include "mik32_hal_usart.h"
 #include "mik32_hal_spi.h"
 #include "timer32.h"
-#include "xprintf.h"
 
 #include "utils/pins.h"
 #include "utils/delays.h"
@@ -40,12 +39,19 @@ int main() {
   ir_set_pin(2);
 
   // tone_init(3, TIMER32_1, TIMER32_0);
-  // set_position_change(&i);
+  // tone(466, 2000);
+  // // set_position_change(&i);
   
   oled_init(spi, 18, 19);
-  sequencer_init();
+  open_sequencer_page();
   contoller_init(2);
-  uint32_t i = 0;
+  // uint32_t i = 0;
+  print_note(2, 2, 'A');
+  print_note(12, 2, '#');
+  print_note(22, 2, '5');
+  oled_set_print_mode(CLEAR);
+  oled_draw_rectangle(2, 2, 28, 13);
+  oled_set_print_mode(PRINT);
   while (1) {
     controller_decode();
   }
