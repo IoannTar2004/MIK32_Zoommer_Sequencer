@@ -1,7 +1,6 @@
 #include "mik32_hal_usart.h"
 #include "mik32_hal_spi.h"
 #include "timer32.h"
-#include "xprintf.h"
 
 #include "utils/pins.h"
 #include "utils/delays.h"
@@ -9,6 +8,7 @@
 // #include "libs/tone.h"
 #include "libs/ssd1306.h"
 #include "project/display.h"
+#include "project/sequencer_logic.h"
 
 #define SYSTEM_FREQ_HZ 32000000UL
 #define PWM_FREQ_HZ (100)
@@ -23,12 +23,9 @@ static void GPIO_Init();
 static void SPI_Init();
 static void TMR_PWM_Init();
 static void TMR_Init();
-static void oled_temp();
 
 static USART_HandleTypeDef husart0;
 static SPI_HandleTypeDef spi;
-
-uint8_t i = 0;
 
 int main() {
   SystemClock_Config();
@@ -44,10 +41,9 @@ int main() {
   // set_position_change(&i);
   
   oled_init(spi, 18, 19);
-  print_note(2, 2, "G#5");
-  volatile int i = 0;
+  sequencer_init();
   while (1) {
-    // i++;
+    
   }
   
 }

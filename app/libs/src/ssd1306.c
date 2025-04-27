@@ -1,12 +1,12 @@
 #include "mik32_hal_spi.h"
 #include "utils/pins.h"
 #include "utils/delays.h"
-#include "xprintf.h"
 
 static SPI_HandleTypeDef spi;
 static uint8_t dc;
-uint8_t rx[128]; // буфер для получения данных по spi (которых нет)
-uint8_t display_buffer[8][128];
+static uint8_t mode = 0;
+static uint8_t rx[128]; // буфер для получения данных по spi (которых нет)
+static uint8_t display_buffer[8][128];
 
 void oled_init(SPI_HandleTypeDef _spi, uint8_t rst_pin, uint8_t dc_pin) {
     spi = _spi;
@@ -35,8 +35,12 @@ void oled_init(SPI_HandleTypeDef _spi, uint8_t rst_pin, uint8_t dc_pin) {
 }
 
 static void add_to_display_buffer(uint8_t page, uint8_t x, uint8_t length, uint8_t pixel) {
-    for (int i = x; i < x + length; i++)
-        display_buffer[page][i] |= pixel;
+    for (int i = x; i < x + length; i++) {
+        if (!mode)
+            display_buffer[page][i] |= pixel;
+        else
+            display_buffer[page][i] &= ~pixel;
+    }
     
     uint8_t set_page[] = {0xB0 + page, x & 0xF, x >> 4 | 0x10};
     digital_write(dc, LOW);
@@ -68,3 +72,6 @@ void oled_draw_rectangle(uint8_t x, uint8_t y, uint8_t length, int8_t width) {
     }
 }
 
+void oled_set_print_mode(uint8_t _mode) {
+    mode = _mode;
+}

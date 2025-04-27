@@ -14,9 +14,11 @@ int ir_decode(uint32_t* data) {
         delayMicroseconds(9200);
         if (digital_read(pin)) {
             delayMicroseconds(4500);
+            if (digital_read(pin))
+                return 0;
             for (int i = 0; i < 32; i++) {
                 while (!digital_read(pin));
-                delayMicroseconds(600);
+                delayMicroseconds(700);
 
                 *data <<= 1;
                 if (digital_read(pin)) {

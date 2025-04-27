@@ -24,6 +24,8 @@
         "ssd.h": "c",
         "tone.h": "c",
         "irreciever.h": "c",
-        "display.h": "c"
+        "display.h": "c",
+        "xprintf.h": "c",
+        "sequencer_logic.h": "c"
     }
 }
