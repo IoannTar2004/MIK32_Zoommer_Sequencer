@@ -10,7 +10,7 @@
 static uint8_t channel;
 static TIMER32_TypeDef* pwm_timer;
 static TIMER32_TypeDef* duration_timer;
-static uint8_t* position = NULL;
+static uint8_t stop = 0;
 
 static uint8_t get_epic_line_timer() {
     if (duration_timer == TIMER32_0) return EPIC_LINE_TIMER32_0_S;
@@ -20,8 +20,12 @@ static uint8_t get_epic_line_timer() {
     return -1;
 }
 
-void set_position_change(uint8_t* _position) {
-    position = _position;
+uint8_t get_stop_flag() {
+    return stop;
+}
+
+void reset_stop_flag() {
+    stop = 0;
 }
 
 static void duration_trap_handler() {
@@ -32,8 +36,8 @@ static void duration_trap_handler() {
         duration_timer->INT_MASK = ~(TIMER32_INT_OVERFLOW_M);
         duration_timer->INT_CLEAR = 0xFFFFFFFF;
         duration_timer->ENABLE = 0;
-        if (position != NULL)
-            *position = *position == 1 ? 0 : (*position) + 1;
+        stop = 1;
+
         EPIC->CLEAR = timer;
     }
 }

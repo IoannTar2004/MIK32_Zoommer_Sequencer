@@ -17,6 +17,7 @@ typedef struct {
 static uint8_t bpm = 120;
 static uint8_t page = SEQUENCER;
 static int8_t cursor = 0;
+static uint8_t play = 0;
 
 static char* notes_array[] = {
     "C", "C#", "D", "D#", "E", "F", 
@@ -25,7 +26,22 @@ static char* notes_array[] = {
 static sequence sequencer[16];
 
 static void clear_current_note();
-static void create_note(char* note, uint8_t note_number);
+static void create_note(char* note, uint8_t note_number, uint8_t pos);
+static void print_note_to_cell(uint8_t note_number, uint8_t pos);
+static void open_sequencer_page();
+static void update_note_parameters()
+
+void sequncer_init() {
+    for (int i = 0; i < 4; i++){
+        for (int j = 0; j < 4; j++) {
+            uint8_t index = j + i * 4;
+            sequencer[index].note = -1;
+            sequencer[index].freq = 0;
+            // sequencer[j + i * 4].duration = ?;
+        }
+    }
+    open_sequencer_page();
+}
 
 static void print_cursor(uint8_t mode) {
     oled_set_print_mode(mode);
@@ -37,9 +53,10 @@ static void print_cursor(uint8_t mode) {
 }
 
 void open_sequencer_page() {
-    for (int i = 0; i < 4; i++){
-        for (int j = 0; j < 4; j++){
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
             oled_draw_rectangle(2 + j * 32, 15 + i * 16, 28, 1);
+            print_note_to_cell(sequencer[j + i * 4].note, j + i * 4);
         }
     }
     print_cursor(PRINT);
@@ -55,11 +72,21 @@ void ir_change_page() {
     page = !page;
 }
 
-static void print_note_to_cell(uint8_t note_number) {
+static void print_note_to_cell(uint8_t note_number, uint8_t pos) {
+    if (note_number > 48)
+        return;
+    sequencer[pos].note = note_number;
+    update_note_parameters();
+
     char note[4];
-    create_note(note, note_number);
+    create_note(note, note_number, pos);
     uint8_t x = note[2] == '\0' ? 7 : 2;
-    print_note(x + (cursor % 4) * 32, 2 + (cursor / 4) * 16, note);
+    print_note(x + (pos % 4) * 32, 2 + (pos / 4) * 16, note);
+}
+
+void update_note_parameters() {
+    sequencer[cursor].freq = 0;
+    // sequencer[cursor].duration = ?
 }
 
 void ir_press_plus_minus(uint8_t plus) {
@@ -72,10 +99,13 @@ void ir_press_plus_minus(uint8_t plus) {
     } else {
         clear_current_note();
         sequencer[cursor].note = plus ? sequencer[cursor].note + 1 : sequencer[cursor].note - 1;
-        if (sequencer[cursor].note > 48) {
-            
+        if (sequencer[cursor].note > 47 && sequencer[cursor].note != 254)
+            sequencer[cursor].note = 255;
+        else if (sequencer[cursor].note == 254) {
+            sequencer[cursor].note = 47;
         }
-        print_note_to_cell(sequencer[cursor].note);
+
+        print_note_to_cell(sequencer[cursor].note, cursor);
     }
 }
 
@@ -126,8 +156,8 @@ static void clear_current_note() {
     oled_set_print_mode(PRINT);
 }
 
-static void create_note(char* note, uint8_t note_number) {
-    sequencer[cursor].note = note_number;
+static void create_note(char* note, uint8_t note_number, uint8_t pos) {
+    sequencer[pos].note = note_number;
     note[0] = notes_array[note_number % 12][0];
     if (notes_array[note_number % 12][1] == '#') {
         note[1] = '#';
@@ -155,9 +185,9 @@ static void ir_set_note(uint32_t code) {
         note_number = note_number * 10 + number;
     }
     if (note_number > 47)
-        note_number = 47;
+        note_number = 255;
 
-    print_note_to_cell(note_number);
+    print_note_to_cell(note_number, cursor);
 }
 
 #define set_edge_bpm(value) \
@@ -222,4 +252,12 @@ void ir_press_numbers_init(uint32_t code) {
         ir_set_bpm(code);
     else
         ir_set_note(code);
+}
+
+uint8_t get_play() {
+    return play;
+}
+
+void set_play(uint8_t _play) {
+    play = _play;
 }

@@ -41,7 +41,7 @@ int main() {
   // // set_position_change(&i);
   
   oled_init(spi, 18, 19);
-  open_sequencer_page();
+  sequncer_init();
   contoller_init(2);
   // uint32_t i = 0;
   while (1) {
