@@ -58,7 +58,7 @@ void controller_decode() {
             break;
     }
 
-    // if (code != BUTTON_PLAY_PAUSE)
-    //     reset_play();
+    if (code != BUTTON_PLAY_PAUSE)
+        reset_play();
     code = 0;
 }
