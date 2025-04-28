@@ -1,35 +1,39 @@
 #include <inttypes.h>
+#include <math.h>
 #include "project/display.h"
-#include "libs/ssd1306.h"
 #include "project/IRcontroller.h"
+#include "project/sequencer_logic.h"
+#include "libs/ssd1306.h"
 #include "libs/IRreciever.h"
 #include "xprintf.h"
 
 #define SEQUENCER 0
 #define BPM 1
 
-typedef struct {
-    uint8_t note;
-    uint16_t freq;
-    float duration;
-} sequence;
-
-static uint8_t bpm = 120;
-static uint8_t page = SEQUENCER;
-static int8_t cursor = 0;
-static uint8_t play = 0;
+static volatile uint8_t bpm = 120;
+static volatile uint8_t page = SEQUENCER;
+static volatile int8_t cursor = 0;
+static volatile uint8_t play = 0;
+static volatile uint8_t last_note = 255;
 
 static char* notes_array[] = {
     "C", "C#", "D", "D#", "E", "F", 
     "F#", "G", "G#", "A", "A#", "B"
 };
-static sequence sequencer[16];
+uint16_t note_frequencies[] = {
+    65, 69, 73, 78, 82, 87, 93, 98, 104, 110, 117, 123,
+    131, 139, 147, 156, 165, 175, 185, 196, 208, 220, 233, 247,
+    262, 277, 294, 311, 330, 349, 370, 392, 415, 440, 466, 494,
+    523, 554, 587, 622, 659, 698, 740, 784, 831, 880, 932, 988
+};
+
+static volatile sequence sequencer[16];
 
 static void clear_current_note();
 static void create_note(char* note, uint8_t note_number, uint8_t pos);
 static void print_note_to_cell(uint8_t note_number, uint8_t pos);
 static void open_sequencer_page();
-static void update_note_parameters()
+static void update_note_freq(uint8_t pos);
 
 void sequncer_init() {
     for (int i = 0; i < 4; i++){
@@ -37,7 +41,7 @@ void sequncer_init() {
             uint8_t index = j + i * 4;
             sequencer[index].note = -1;
             sequencer[index].freq = 0;
-            // sequencer[j + i * 4].duration = ?;
+            sequencer[index].duration = 125;
         }
     }
     open_sequencer_page();
@@ -73,10 +77,14 @@ void ir_change_page() {
 }
 
 static void print_note_to_cell(uint8_t note_number, uint8_t pos) {
-    if (note_number > 48)
-        return;
     sequencer[pos].note = note_number;
-    update_note_parameters();
+    last_note = note_number;
+    update_note_freq(pos);
+
+    if (note_number > 48) {
+        clear_current_note();
+        return;
+    }
 
     char note[4];
     create_note(note, note_number, pos);
@@ -84,9 +92,19 @@ static void print_note_to_cell(uint8_t note_number, uint8_t pos) {
     print_note(x + (pos % 4) * 32, 2 + (pos / 4) * 16, note);
 }
 
-void update_note_parameters() {
-    sequencer[cursor].freq = 0;
-    // sequencer[cursor].duration = ?
+inline void update_note_freq(uint8_t pos) {
+    sequencer[pos].freq = sequencer[pos].note < 48 ? note_frequencies[sequencer[pos].note] : 0;
+}
+
+static inline void update_note_duration() {
+    for (size_t i = 0; i < 16; i++) {
+        sequencer[i].duration = 15000 / bpm;
+    }
+    
+}
+
+void print_last_note() {
+    print_note_to_cell(last_note, cursor);
 }
 
 void ir_press_plus_minus(uint8_t plus) {
@@ -245,6 +263,7 @@ end:
         print_bpm(new_bpm);
     }
     bpm = new_bpm;
+    update_note_duration();
 }
 
 void ir_press_numbers_init(uint32_t code) {
@@ -254,10 +273,18 @@ void ir_press_numbers_init(uint32_t code) {
         ir_set_note(code);
 }
 
+sequence* get_sequencer() {
+    return sequencer;
+}
+
 uint8_t get_play() {
     return play;
 }
 
-void set_play(uint8_t _play) {
-    play = _play;
+void switch_play() {
+    play = !play;
+}
+
+void reset_play() {
+    play = 0;
 }

@@ -2,7 +2,6 @@
 #include "mik32_hal_gpio.h"
 #include "../pins.h"
 
-
 static pins gpio_array[] = {
     {.gpio = GPIO_0, .pin_num = GPIO_PIN_5},    // D0
     {.gpio = GPIO_0, .pin_num = GPIO_PIN_6},    // D1
@@ -24,6 +23,7 @@ static pins gpio_array[] = {
     {.gpio = GPIO_0, .pin_num = GPIO_PIN_7},    // D17
     {.gpio = GPIO_1, .pin_num = GPIO_PIN_12},    // D18
     {.gpio = GPIO_1, .pin_num = GPIO_PIN_13},    // D19
+    {.gpio = GPIO_2, .pin_num = GPIO_PIN_7}
 };
 
 pins get_pin(uint8_t n) {
@@ -31,7 +31,7 @@ pins get_pin(uint8_t n) {
 }
 
 void pin_mode(uint8_t pin_num, HAL_GPIO_ModeTypeDef pin_mode) {
-    if (pin_num > 19)
+    if (pin_num > 20)
         return;
 
     pins pin = gpio_array[pin_num];

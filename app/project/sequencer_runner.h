@@ -1,6 +1,9 @@
-#include "libs/tone.h"
-#include "project/sequencer_logic.h"
+#ifndef SEQUENCER_RUNNER
+#define SEQUENCER_RUNNER
 
-void sequencer_play() {
-    play = 1;
-}
+#include "timer32.h"
+
+void sequencer_play();
+inline void sequencer_runner_init(uint8_t zoomer_pin_num);
+
+#endif

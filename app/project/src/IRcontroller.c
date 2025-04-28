@@ -50,6 +50,15 @@ void controller_decode() {
         case BUTTON_PREV:
             ir_press_next_prev(0);
             break;
+        case BUTTON_PLAY_PAUSE:
+            switch_play();
+            break;
+        case BUTTON_100_PLUS:
+            print_last_note();
+            break;
     }
+
+    // if (code != BUTTON_PLAY_PAUSE)
+    //     reset_play();
     code = 0;
 }

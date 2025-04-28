@@ -3,11 +3,14 @@
 #include "timer32.h"
 
 #include "libs/IRreciever.h"
-// #include "libs/tone.h"
 #include "libs/ssd1306.h"
 #include "project/display.h"
 #include "project/sequencer_logic.h"
+#include "project/sequencer_runner.h"
 #include "project/IRcontroller.h"
+#include "libs/tone.h"
+#include "xprintf.h"
+#include "utils/delays.h"
 
 #define SYSTEM_FREQ_HZ 32000000UL
 #define PWM_FREQ_HZ (100)
@@ -31,23 +34,22 @@ int main() {
   GPIO_Init();
   USART_Init();
   SPI_Init();
-  TMR_PWM_Init();
-  TMR_Init();
 
   ir_set_pin(2);
-
-  // tone_init(3, TIMER32_1, TIMER32_0);
-  // tone(466, 2000);
-  // // set_position_change(&i);
-  
+  contoller_init(2);
   oled_init(spi, 18, 19);
   sequncer_init();
-  contoller_init(2);
-  // uint32_t i = 0;
+
+  pin_mode(3, __OUTPUT);
+  TMR_PWM_Init();
+  sequencer_runner_init(3);
   while (1) {
     controller_decode();
+    sequencer_play();
+      // xprintf("e");
+      // if (ir_decode(&a))
+      //   tone(466, 1000);
   }
-  
 }
 
 void TMR_PWM_Init() {
@@ -56,12 +58,12 @@ void TMR_PWM_Init() {
   TIMER32_1->CONTROL =
   TIMER32_CONTROL_MODE_UP_M | TIMER32_CONTROL_CLOCK_PRESCALER_M;
   TIMER32_1->INT_CLEAR = 0xFFFFFFFF;
+  TIMER32_1->PRESCALER = 0;
 
   TIMER32_1->CHANNELS[0].CNTRL =
       TIMER32_CH_CNTRL_MODE_PWM_M | TIMER32_CH_CNTRL_ENABLE_M;
       
   TIMER32_1->CHANNELS[0].OCR = 0;
-  TIMER32_1->ENABLE = 1;
 }
 
 void TMR_Init() {
