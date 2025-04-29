@@ -1,11 +1,9 @@
 #include <inttypes.h>
-#include <math.h>
 #include "project/display.h"
 #include "project/IRcontroller.h"
 #include "project/sequencer_logic.h"
 #include "libs/ssd1306.h"
 #include "libs/IRreciever.h"
-#include "xprintf.h"
 
 #define SEQUENCER 0
 #define BPM 1
@@ -109,7 +107,7 @@ void print_last_note() {
 
 void ir_press_plus_minus(uint8_t plus) {
     if (page == BPM) {
-        if (plus && bpm == 255 || !plus && bpm == 60)
+        if ((plus && bpm == 255) || (!plus && bpm == 60))
             return;
         oled_clear_screen();
         bpm = plus ? bpm + 1: bpm - 1;
@@ -209,9 +207,9 @@ static void ir_set_note(uint32_t code) {
 }
 
 #define set_edge_bpm(value) \
-    oled_clear_screen();    \
     print_bpm(value);         \
-    bpm = value;
+    bpm = value;                \
+    return;
 
 static void ir_set_bpm(uint32_t code) {
     uint8_t number = get_number_from_ircode(code);
@@ -254,14 +252,13 @@ static void ir_set_bpm(uint32_t code) {
     }
     
 end:
+    oled_clear_screen();
     if (new_bpm > 255) {
         set_edge_bpm(255);
     } else if (new_bpm < 60) {
         set_edge_bpm(60);
-    } else if (new_bpm < 100) {
-        oled_clear_screen();
-        print_bpm(new_bpm);
     }
+    print_bpm(new_bpm);
     bpm = new_bpm;
     update_note_duration();
 }
@@ -273,7 +270,15 @@ void ir_press_numbers_init(uint32_t code) {
         ir_set_note(code);
 }
 
-sequence* get_sequencer() {
+uint8_t get_bpm() {
+    return bpm;
+}
+
+void set_bpm(uint8_t _bpm) {
+    bpm = _bpm;
+}
+
+volatile sequence* get_sequencer() {
     return sequencer;
 }
 

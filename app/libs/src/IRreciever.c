@@ -22,8 +22,8 @@ int ir_decode(uint32_t* data) {
 
                 *data <<= 1;
                 if (digital_read(pin)) {
-                    *data |= 1; // длинный импульс = 1
-                    while (digital_read(pin)); // ждём окончания импульса
+                    *data |= 1;
+                    while (digital_read(pin));
                 }
             }
             return 1;

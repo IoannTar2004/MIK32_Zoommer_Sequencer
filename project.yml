@@ -100,9 +100,15 @@
     - +:tests/**
     - -:tests/support
   :source:
+    - app/libs/src/**
+    - app/utils/src/**
+    - app/project/src/**
     - app/**
     - hardware/**
   :include:
+    - app/libs/**
+    - app/utils/**
+    - app/project/**
     - app/**
     - hardware/**
   :support:
