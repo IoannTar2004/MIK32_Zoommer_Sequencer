@@ -2,12 +2,14 @@
 #include "mik32_hal.h"
 #include "utils/pins.h"
 #include "utils/delays.h"
+#include "utils/pins.h"
 #include "xprintf.h"
 
 static uint8_t pin;
 
 void tone_init(uint8_t pin_num) {
     pin = pin_num;
+    pin_mode(pin, __OUTPUT);
 }
 
 __attribute__((section(".ram_text"))) 

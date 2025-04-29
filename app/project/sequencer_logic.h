@@ -15,9 +15,11 @@ void ir_press_up_down(uint8_t up);
 void ir_press_next_prev(uint8_t next);
 void ir_press_numbers_init(uint32_t first);
 
-inline sequence* get_sequencer();
-inline uint8_t get_play();
-inline void switch_play();
+uint8_t get_bpm();
+void set_bpm(uint8_t _bpm);
+volatile sequence* get_sequencer();
+uint8_t get_play();
+void switch_play();
 void reset_play();
 
 #endif

@@ -27,6 +27,8 @@
         "display.h": "c",
         "xprintf.h": "c",
         "sequencer_logic.h": "c",
-        "ircontroller.h": "c"
+        "ircontroller.h": "c",
+        "a.h": "c",
+        "sequencer_runner.h": "c"
     }
 }

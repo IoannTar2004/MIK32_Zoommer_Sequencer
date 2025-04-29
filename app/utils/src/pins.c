@@ -23,7 +23,7 @@ static pins gpio_array[] = {
     {.gpio = GPIO_0, .pin_num = GPIO_PIN_7},    // D17
     {.gpio = GPIO_1, .pin_num = GPIO_PIN_12},    // D18
     {.gpio = GPIO_1, .pin_num = GPIO_PIN_13},    // D19
-    {.gpio = GPIO_2, .pin_num = GPIO_PIN_7}
+    {.gpio = GPIO_2, .pin_num = GPIO_PIN_7}     // D20
 };
 
 pins get_pin(uint8_t n) {

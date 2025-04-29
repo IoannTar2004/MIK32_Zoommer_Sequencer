@@ -4,27 +4,20 @@
 
 #include "libs/IRreciever.h"
 #include "libs/ssd1306.h"
-#include "project/display.h"
 #include "project/sequencer_logic.h"
 #include "project/sequencer_runner.h"
 #include "project/IRcontroller.h"
-#include "libs/tone.h"
-#include "xprintf.h"
-#include "utils/delays.h"
 
-#define SYSTEM_FREQ_HZ 32000000UL
-#define PWM_FREQ_HZ (100)
 #define IR_PIN 2
-#define PWM_PERIOD_TICKS (SYSTEM_FREQ_HZ / PWM_FREQ_HZ)
-#define PWM_DUTY_CYCLE_PERCENT (50)
-#define PWM_DUTY_CYCLE_TICKS ((PWM_PERIOD_TICKS / 100) * PWM_DUTY_CYCLE_PERCENT)
+#define OLED_RESET_PIN 18
+#define OLED_DC_PIN 19
+#define ZOOMER_PIN 3
 
 static void SystemClock_Config();
 static void USART_Init();
 static void GPIO_Init();
 static void SPI_Init();
 static void TMR_PWM_Init();
-static void TMR_Init();
 
 static USART_HandleTypeDef husart0;
 static SPI_HandleTypeDef spi;
@@ -35,20 +28,15 @@ int main() {
   USART_Init();
   SPI_Init();
 
-  ir_set_pin(2);
-  contoller_init(2);
-  oled_init(spi, 18, 19);
+  contoller_init(IR_PIN);
+  oled_init(spi, OLED_RESET_PIN, OLED_DC_PIN);
   sequncer_init();
 
-  pin_mode(3, __OUTPUT);
   TMR_PWM_Init();
-  sequencer_runner_init(3);
+  sequencer_runner_init(ZOOMER_PIN);
   while (1) {
     controller_decode();
     sequencer_play();
-      // xprintf("e");
-      // if (ir_decode(&a))
-      //   tone(466, 1000);
   }
 }
 
@@ -65,18 +53,6 @@ void TMR_PWM_Init() {
       
   TIMER32_1->CHANNELS[0].OCR = 0;
 }
-
-void TMR_Init() {
-  // Включение тактирования TIMER32_0
-  PM->CLK_APB_M_SET = PM_CLOCK_APB_M_TIMER32_0_M;
-  TIMER32_0->ENABLE = 0;
-  TIMER32_0->PRESCALER = 0;
-  TIMER32_0->CONTROL =
-      TIMER32_CONTROL_MODE_UP_M | TIMER32_CONTROL_CLOCK_PRESCALER_M;
-  TIMER32_0->INT_MASK = 0;
-  TIMER32_0->INT_CLEAR = 0xFFFFFFFF;
-}
-
 
 void SystemClock_Config(void) {
   PCC_InitTypeDef PCC_OscInit = {0};
