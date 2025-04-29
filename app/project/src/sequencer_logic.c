@@ -102,6 +102,7 @@ static inline void update_note_duration() {
 }
 
 void print_last_note() {
+    clear_current_note();
     print_note_to_cell(last_note, cursor);
 }
 
